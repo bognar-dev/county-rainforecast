@@ -1,0 +1,108 @@
+// Copyright 2015 gRPC authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+option go_package = "google.golang.org/grpc/examples/route_guide/acutionhouse";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.acutionhouse";
+option java_outer_classname = "RouteGuideProto";
+
+package auctionhouse;
+
+
+enum AuctionType {
+  ENGLISH = 0;
+  DUTCH = 1;
+  VICKREY = 2;
+  YANKEE = 3;
+}
+
+enum LotStatus {
+  OPEN = 0;
+  CLOSED = 1;
+}
+
+enum UserType {
+  SELLER = 0;
+  BUYER = 1;
+}
+
+// Interface exported by the server.
+service AuctionHouse {
+
+  // Adds a lot to the auction house.
+  rpc AddLot(lot) returns (lot) {}
+
+  // Lists all the lots in the auction house.
+  rpc ListLots(Empty) returns (stream lot) {}
+  // Lists all the lots in the auction house by type
+  rpc ListLotsByType(AuctionTypeRequest) returns (stream lot) {}
+
+  // Lists all the lots in the auction house by status
+  rpc ListLotsByStatus(LotStatusRequest) returns (stream lot) {}
+
+  // Lists all the lots in the auction house by user
+  rpc ListLotsByUser(User) returns (stream lot) {}
+
+  //get a constant stream of one lot
+  rpc GetLot(lot) returns (stream lot) {}
+
+  // Bids on a lot.
+  rpc Bid(BidRequest) returns (lot) {}
+
+  // Registers a user.
+  rpc Register(User) returns (User) {}
+
+  // Logs in a user.
+  rpc Login(User) returns (User) {}
+
+
+}
+message LotStatusRequest {
+  LotStatus status = 1;
+}
+
+message AuctionTypeRequest {
+  AuctionType auctionType = 1;
+}
+
+message Empty {}
+
+message BidRequest {
+  lot lot = 1;
+  int32 price = 2;
+}
+
+
+
+message lot {
+  string name = 1;
+  string description = 2;
+  double startPrice = 3;
+  double currentPrice = 4;
+  User seller = 5;
+  User buyer = 6;
+  AuctionType auctionType = 7;
+  LotStatus status = 8;
+}
+
+message User {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  UserType userType = 4;
+}
+
+
