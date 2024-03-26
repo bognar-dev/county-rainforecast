@@ -1,0 +1,36 @@
+version: "3"
+services:
+  AuctionServiceDB:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    platform: linux/amd64
+    container_name: lsql-1
+    restart: no
+    ports:
+      - "8051:8051"
+    expose:
+      - 5001
+    volumes:
+      - ./data/1:/var/lib/sqld
+    environment:
+      - SQLD_NODE=primary
+      - SQLD_HTTP_AUTH=basic:YWRtaW46YWRtaW4=
+      - SQLD_GRPC_LISTEN_ADDR=0.0.0.0:5001
+      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8051
+  
+
+  BidderServiceDB:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    platform: linux/amd64
+    container_name: lsql-2
+    restart: no
+    ports:
+      - "8052:8052"
+    expose:
+      - 5002
+    volumes:
+      - ./data/2:/var/lib/sqld
+    environment:
+      - SQLD_NODE=primary
+      - SQLD_HTTP_AUTH=basic:YWRtaW46YWRtaW4=
+      - SQLD_GRPC_LISTEN_ADDR=0.0.0.0:5002
+      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8052
