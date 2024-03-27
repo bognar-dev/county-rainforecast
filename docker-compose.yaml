@@ -1,36 +1,58 @@
 version: "3"
 services:
   AuctionServiceDB:
-    image: ghcr.io/tursodatabase/libsql-server:latest
-    platform: linux/amd64
-    container_name: lsql-1
-    restart: no
+      image: postgres:14-alpine
+      container_name: AuctionServiceDB
+      ports:
+        - 8081:5432
+      volumes:
+        - ./postgres-data:/1:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_PASSWORD=1893
+        - POSTGRES_USER=bognardev
+        - POSTGRES_DB=auction-service
+
+
+  ListingService:
+    build:
+      context: ./src/AuctionServices/ListingService
+      dockerfile: Dockerfile
+    container_name: listing-service
+    restart: always
     ports:
-      - "8051:8051"
-    expose:
-      - 5001
+      - "8082:8080"
     volumes:
-      - ./data/1:/var/lib/sqld
-    environment:
-      - SQLD_NODE=primary
-      - SQLD_HTTP_AUTH=basic:YWRtaW46YWRtaW4=
-      - SQLD_GRPC_LISTEN_ADDR=0.0.0.0:5001
-      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8051
-  
+      - ./src/AuctionServices/ListingService:/app
+    working_dir: /app
+    command: [ "./main" ]
+    depends_on:
+      - AuctionServiceDB
+
+
+  ViewingService:
+    image: golang:1.21.3
+    container_name: ViewService
+    restart: always
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./src/AuctionServices/ViewService:/app
+    working_dir: /app
+    command: [ "./main" ]
+    depends_on:
+      - AuctionServiceDB
 
   BidderServiceDB:
-    image: ghcr.io/tursodatabase/libsql-server:latest
-    platform: linux/amd64
-    container_name: lsql-2
-    restart: no
-    ports:
-      - "8052:8052"
-    expose:
-      - 5002
-    volumes:
-      - ./data/2:/var/lib/sqld
-    environment:
-      - SQLD_NODE=primary
-      - SQLD_HTTP_AUTH=basic:YWRtaW46YWRtaW4=
-      - SQLD_GRPC_LISTEN_ADDR=0.0.0.0:5002
-      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8052
+        image: postgres:14-alpine
+        container_name: BidderServiceDB
+        ports:
+            - 5433:8082
+        volumes:
+            - ./postgres-data:/2:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=1893
+            - POSTGRES_USER=bognar-dev
+            - POSTGRES_DB=bidder-service
+
+
+
