@@ -1,11 +1,8 @@
 {
-    "buildCommand": "pnpm turbo build",
-    "ignoreCommand": "pnpm dlx turbo-ignore",
     "crons": [
-      {
-        "path": "/api/scrape-matches",
-        "schedule": "0-59 * * * *"
-      }
+        {
+            "path": "/api/scrape-matches",
+            "schedule": "*/10 * * * *"
+        }
     ]
-
 }
