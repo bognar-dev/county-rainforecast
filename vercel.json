@@ -1,0 +1,8 @@
+{
+    "crons": [
+      {
+        "path": "/api/scrape-matches",
+        "schedule": "0-59 * * * *"
+      }
+    ]
+  }
