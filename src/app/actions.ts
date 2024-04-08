@@ -42,7 +42,11 @@ export async function scrapeMatches() {
         }
 
         return matchElements.map(matchElement => {
-            const date = getTextContent(document.querySelector('.w-fixture-listing__heading'));
+            let date = getTextContent(matchElement.querySelector('.w-match-card__match-live-label'));
+            console.log("Date live: " + date);
+            if (!date || date === '') {
+                date = getTextContent(matchElement.querySelector('.match-card__match-time-user'));
+            }   
             const format = getTextContent(matchElement.querySelector('.w-match-card__format'));
             const teamA = getTeamInfo(matchElement.querySelector('.w-match-card__score-row--team-a')!);
             const teamB = getTeamInfo(matchElement.querySelector('.w-match-card__score-row--team-b')!);
